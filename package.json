@@ -1,0 +1,12 @@
+{
+  "name": "show-geometry",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/antunesleo/show-geometry",
+  "author": "antunesleo4@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "angular": "^1.6.9",
+    "sweetalert": "^2.1.0"
+  }
+}
