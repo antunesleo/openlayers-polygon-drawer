@@ -12,8 +12,9 @@
     <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
     <script src="js/app.js"></script>
   </head>
-  <body ng-app="showGeometry" ng-controller="mapController">
-    <div id="map" class="map">
+  <body ng-app="showGeometry">
+      <div ng-include="'templates/geometry.html'"></div>
+    <div id="map" class="map" ng-controller="mapController">
     </div>
   </body>
   
