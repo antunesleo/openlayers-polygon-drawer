@@ -9,7 +9,14 @@ app.run(function($rootScope) {
 
 app.controller("mapController", ['$scope', function($scope) {
     var imageLayer = null;
+    $scope.isBingOpen = false;
     var bboxBrasil = [-8237536, -3210509.3, -3995344, 588319.6];
+
+    $scope.changeBingLayer = function(){
+      $scope.isBingOpen = !$scope.isBingOpen;
+      bingLayer.setVisible($scope.isBingOpen);
+    };
+  
 
     var scaleLineControl = new ol.control.ScaleLine({
       geodesic: true

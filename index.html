@@ -13,8 +13,12 @@
     <script src="js/app.js"></script>
   </head>
   <body ng-app="showGeometry">
-      <div ng-include="'templates/geometry.html'"></div>
+    <div ng-include="'templates/geometry.html'"></div>
     <div id="map" class="map" ng-controller="mapController">
+        <div ng-click="changeBingLayer()" class="map-layer-switch">
+            <div ng-if="!isBingOpen" class="bing">Bing</div>
+            <div ng-if="isBingOpen" class="mapa">Mapa</div>
+          </div>
     </div>
   </body>
   
