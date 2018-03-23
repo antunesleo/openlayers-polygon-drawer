@@ -2,23 +2,24 @@
 <html>
   <head>
     <title>Home</title>
+    <meta charset="utf-8">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/ol3/4.6.5/ol.css" rel="stylesheet">
+    <link href="lib/open-layers-v4.6.5-dist/ol.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="node_modules/jquery/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="node_modules/angular-bootstrap/ui-bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="node_modules/angular/angular.min.js"></script>
     <script src="node_modules/sweetalert/dist/sweetalert.min.js"></script>
-    <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+    <script src="lib/open-layers-v4.6.5-dist/ol.js"></script>
     <script src="js/app.js"></script>
   </head>
   <body ng-app="showGeometry">
     <div ng-include="'templates/geometry.html'"></div>
     <div id="map" class="map" ng-controller="mapController">
-        <div ng-click="changeBingLayer()" class="map-layer-switch">
-            <div ng-if="!isBingOpen" class="bing">Bing</div>
-            <div ng-if="isBingOpen" class="mapa">Mapa</div>
-          </div>
+      <div ng-click="changeBingLayer()" class="map-layer-switch">
+        <div ng-if="!isBingOpen" class="satelite-map">Satélite</div>
+        <div ng-if="isBingOpen" class="ol-map">Mapa</div>
+      </div>
     </div>
   </body>
   

@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+angular-bootstrap@^0.12.2:
+  version "0.12.2"
+  resolved "https://registry.yarnpkg.com/angular-bootstrap/-/angular-bootstrap-0.12.2.tgz#de9900a7db087a7e9da47304a9c2f77f9c069827"
+
 angular@^1.6.9:
   version "1.6.9"
   resolved "https://registry.yarnpkg.com/angular/-/angular-1.6.9.tgz#bc812932e18909038412d594a5990f4bb66c0619"
@@ -9,6 +13,10 @@ angular@^1.6.9:
 es6-object-assign@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/es6-object-assign/-/es6-object-assign-1.1.0.tgz#c2c3582656247c39ea107cb1e6652b6f9f24523c"
+
+jquery@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
 
 promise-polyfill@^6.0.2:
   version "6.1.0"
