@@ -126,11 +126,7 @@ app.controller("mapController", ['$scope', function($scope) {
       if ($scope.mapAreGray) greyscale(event.context);
       if ($scope.mapAreThreshold) threshold(event.context);
       if ($scope.mapAreBlur) blur(event.context);
-      if ($scope.mapAreClarified) {
-        clarify(event.context)
-      } else {
-        normalBrigthness(event.context);
-      } 
+      if ($scope.mapAreClarified) clarify(event.context);
     });
   
     var map = new ol.Map({
