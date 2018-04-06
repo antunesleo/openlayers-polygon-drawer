@@ -78,7 +78,7 @@ app.controller("mapController", ['$scope', function($scope) {
   
     var bingLayer = new ol.layer.Tile({
       source: new ol.source.BingMaps({
-        key: 'Aju6M8s8i2z68M1SsotZXEQozjluS0fMx874AKbJYKptLdaIGJXaU9aAyd1xQUWd',
+        key: '',
         imagerySet: 'AerialWithLabels'
       }),
       visible: false,
