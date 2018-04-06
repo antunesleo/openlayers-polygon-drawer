@@ -11,8 +11,10 @@ app.controller("mapController", ['$scope', function($scope) {
     var imageLayer = null;
     $scope.isBingOpen = false;
     $scope.mapAreGray = false;
+    $scope.mapAreAlmostGray = false;
     $scope.mapAreThreshold = false;
-    $scope.mapAreBlur = true;
+    $scope.mapAreBlur = false;
+    $scope.mapAreClarified = true;
     var bboxBrasil = [-8237536, -3210509.3, -3995344, 588319.6];
 
     function greyscale(context) {
@@ -38,6 +40,11 @@ app.controller("mapController", ['$scope', function($scope) {
       context.putImageData(imageData,0,0); 
     };
 
+    function almostGray(context) {
+      var canvas = context.canvas;
+      canvas.getContext('2d').filter = 'grayscale(70%)';
+    };
+
     function threshold(context) {
       var canvas = context.canvas;
       var width = canvas.width;
@@ -59,9 +66,24 @@ app.controller("mapController", ['$scope', function($scope) {
       bingLayer.setVisible($scope.isBingOpen);
     };
 
+    $scope.clarifyBing = function() {
+      $scope.mapAreClarified = !$scope.mapAreClarified;
+      console.log('clarified?', $scope.mapAreClarified);
+    };
+
     var blur = function(context) {
       var canvas = context.canvas;
       canvas.getContext('2d').filter = 'blur(5px) opacity(0.6)';
+    }
+
+    var clarify = function(context) {
+      var canvas = context.canvas;
+      canvas.getContext('2d').filter = 'brightness(170%)';
+    }
+
+    var normalBrigthness = function(context) {
+      var canvas = context.canvas;
+      canvas.getContext('2d').filter = 'brightness(100%)';
     }
 
     var scaleLineControl = new ol.control.ScaleLine({
@@ -78,7 +100,7 @@ app.controller("mapController", ['$scope', function($scope) {
   
     var bingLayer = new ol.layer.Tile({
       source: new ol.source.BingMaps({
-        key: '',
+        key: 'ArwEpKxxf_31Uy_9GXxuNrFZWKJgoa_dZk_z-r_c3p0ulsOQKe5azv2zsOkDnMzW',
         imagerySet: 'AerialWithLabels'
       }),
       visible: false,
@@ -95,6 +117,20 @@ app.controller("mapController", ['$scope', function($scope) {
       if ($scope.mapAreGray) greyscale(event.context);
       if ($scope.mapAreThreshold) threshold(event.context);
       if ($scope.mapAreBlur) blur(event.context);
+      if ($scope.mapAreAlmostGray) almostGray(event.context);
+      if ($scope.mapAreClarified) clarify(event.context);
+    });
+
+    bingLayer.on('postcompose', function(event) {
+      console.log('really clarified?', $scope.mapAreClarified);
+      if ($scope.mapAreGray) greyscale(event.context);
+      if ($scope.mapAreThreshold) threshold(event.context);
+      if ($scope.mapAreBlur) blur(event.context);
+      if ($scope.mapAreClarified) {
+        clarify(event.context)
+      } else {
+        normalBrigthness(event.context);
+      } 
     });
   
     var map = new ol.Map({
