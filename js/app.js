@@ -4,62 +4,14 @@ app.config([function() {
 }]);
 
 app.run(function($rootScope) {
-
+  $rootScope.polygonCoordinates = null;
 });
 
-app.controller("mapController", ['$scope', function($scope) {
-    var imageLayer = null;
+app.controller("mapController", ['$scope', '$rootScope', function($scope, $rootScope) {
     $scope.isBingOpen = false;
-    $scope.mapAreGray = false;
-    $scope.mapAreAlmostGray = false;
-    $scope.mapAreThreshold = false;
-    $scope.mapAreBlur = false;
-    $scope.mapAreClarified = true;
+
     var bboxBrasil = [-8237536, -3210509.3, -3995344, 588319.6];
-
-    function greyscale(context) {
-      var canvas = context.canvas;
-      var width = canvas.width;
-      var height = canvas.height;
-      var imageData = context.getImageData(0, 0, width, height);
-      var data = imageData.data;
-      for(i=0; i < data.length; i += 4){
-        var r = data[i];
-        var g = data[i + 1];
-        var b = data[i + 2];
-        // CIE luminance for the RGB
-        var v = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-        // Show white color instead of black color while loading new tiles:
-        if(v === 0.0)
-         v=255.0;  
-        data[i+0] = v; // Red
-        data[i+1] = v; // Green
-        data[i+2] = v; // Blue
-        data[i+3] = 255; // Alpha
-      }
-      context.putImageData(imageData,0,0); 
-    };
-
-    function almostGray(context) {
-      var canvas = context.canvas;
-      canvas.getContext('2d').filter = 'grayscale(70%)';
-    };
-
-    function threshold(context) {
-      var canvas = context.canvas;
-      var width = canvas.width;
-      var height = canvas.height;
-      var imageData = context.getImageData(0, 0, width, height);
-      var data = imageData.data;
-      for(i=0; i < data.length; i += 4){
-        var r = data[i];
-        var g = data[i+1];
-        var b = data[i+2];
-        var v = (0.2126*r + 0.7152*g + 0.0722*b >= 220) ? 255 : 0;
-        data[i] = data[i+1] = data[i+2] = v
-      }
-      context.putImageData(imageData,0,0); 
-    }
+    var imageLayer = null;
 
     $scope.changeBingLayer = function(){
       $scope.isBingOpen = !$scope.isBingOpen;
@@ -70,21 +22,6 @@ app.controller("mapController", ['$scope', function($scope) {
       $scope.mapAreClarified = !$scope.mapAreClarified;
       console.log('clarified?', $scope.mapAreClarified);
     };
-
-    var blur = function(context) {
-      var canvas = context.canvas;
-      canvas.getContext('2d').filter = 'blur(5px) opacity(0.6)';
-    }
-
-    var clarify = function(context) {
-      var canvas = context.canvas;
-      canvas.getContext('2d').filter = 'brightness(170%)';
-    }
-
-    var normalBrigthness = function(context) {
-      var canvas = context.canvas;
-      canvas.getContext('2d').filter = 'brightness(100%)';
-    }
 
     var scaleLineControl = new ol.control.ScaleLine({
       geodesic: true
@@ -113,43 +50,129 @@ app.controller("mapController", ['$scope', function($scope) {
       preload: true
     });
 
-    osmLayer.on('postcompose', function(event) {
-      if ($scope.mapAreGray) greyscale(event.context);
-      if ($scope.mapAreThreshold) threshold(event.context);
-      if ($scope.mapAreBlur) blur(event.context);
-      if ($scope.mapAreAlmostGray) almostGray(event.context);
-      if ($scope.mapAreClarified) clarify(event.context);
+    var source = new ol.source.Vector();
+
+    var vector = new ol.layer.Vector({
+      source: source,
+      style: new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: 'rgba(255, 255, 255, 0.2)'
+        }),
+        stroke: new ol.style.Stroke({
+          color: '#ffcc33',
+          width: 2
+        }),
+        image: new ol.style.Circle({
+          radius: 7,
+          fill: new ol.style.Fill({
+            color: '#ffcc33'
+          })
+        })
+      })
     });
 
-    bingLayer.on('postcompose', function(event) {
-      console.log('really clarified?', $scope.mapAreClarified);
-      if ($scope.mapAreGray) greyscale(event.context);
-      if ($scope.mapAreThreshold) threshold(event.context);
-      if ($scope.mapAreBlur) blur(event.context);
-      if ($scope.mapAreClarified) clarify(event.context);
-    });
-  
+    var sketch;
+
+    var pointerMoveHandler = function(evt) {
+      if (evt.dragging) {
+        return;
+      }
+      /** @type {string} */
+      var helpMsg = 'Click to start drawing';
+
+      if (sketch) {
+        var geom = (sketch.getGeometry());
+        if (geom instanceof ol.geom.Polygon) {
+            // do something
+        }
+      }
+    };
+
     var map = new ol.Map({
       layers: [
         osmLayer,
-        bingLayer
+        bingLayer,
+        vector
       ],
       target: 'map',
       controls: controls,
       view: new ol.View({
-        center: [0, 0],
+        center: bboxBrasil,
         zoom: 3
       })
     });
+
+    map.on('pointermove', pointerMoveHandler);
+
   
     map.renderSync();
   
     setTimeout(function(){
       map.renderSync();
     }, 100);
-  
+
+    function addInteraction() {
+      var type = 'Polygon';
+      draw = new ol.interaction.Draw({
+        source: source,
+        type: type,
+        style: new ol.style.Style({
+          fill: new ol.style.Fill({
+            color: 'rgba(255, 255, 255, 0.2)'
+          }),
+          stroke: new ol.style.Stroke({
+            color: 'rgba(0, 0, 0, 0.5)',
+            lineDash: [10, 10],
+            width: 2
+          }),
+          image: new ol.style.Circle({
+            radius: 3,
+            stroke: new ol.style.Stroke({
+              color: 'rgba(0, 0, 0, 0.7)'
+            }),
+            fill: new ol.style.Fill({
+              color: 'rgba(255, 255, 255, 0.2)'
+            })
+          })
+        })
+      });
+      map.addInteraction(draw);
+
+      var listener;
+      draw.on('drawstart',
+          function(evt) {
+            sketch = evt.feature;
+
+            listener = sketch.getGeometry().on('change', function(evt) {
+              var geom = evt.target;
+              if (geom instanceof ol.geom.Polygon) {
+                $rootScope.polygonCoordinates = geom.getCoordinates();
+              }
+            });
+          }, this);
+
+      draw.on('drawend',
+          function() {
+            sketch = null;
+          }, this);
+    }
+
+    addInteraction();
 }]);
 
-app.controller("geometryController", ['$scope', function($scope) {
+app.controller("geometryController", ['$scope', '$rootScope', function($scope, $rootScope) {
+  $scope.geoJsonGenerated = '';
 
+  $scope.generatePolygonGeoJson = function() {
+    $scope.geoJsonGenerated = JSON.stringify({
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": $rootScope.polygonCoordinates
+      },
+      "properties": {
+        "name": "Generated Polygon"
+      }
+    });
+  };
 }]);
