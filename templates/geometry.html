@@ -1,5 +1,11 @@
 <div ng-controller="geometryController" class="panel-geometry">
-    <h3>Generate Polygon GeoJSON</h3>
-    <button ng-click="generatePolygonGeoJson()">Generate</button>
-    <textarea ng-model="geoJsonGenerated"></textarea>
+    <div div="row" class="title-hint">
+        <h4>Draw a polygon and export it to geoJson</h4>
+    </div>
+    <div class="row">
+        <textarea ng-model="geoJsonGenerated" rows="12" cols="30"></textarea>
+    </div>
+    <div class="row">
+        <button ng-click="generatePolygonGeoJson()">Generate</button>
+    </div>
 </div>
